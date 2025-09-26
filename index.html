@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/output.css" rel="stylesheet" />
+    <title>Prueba de WedSockets</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body class="min-h-screen">
+    <header class="bg-gray-950/90 h-24 items-center justify-between flex">
+      <div class="flex font-semibold">
+        <img
+          src="src/gamepad-2.svg"
+          alt="Logo"
+          class="flex scale-185 p-0.5 bg-gray-100/90 ml-[4rem] rounded-full mr-[1.4rem]"
+        />
+        <h3 class="mr-4 scale-110 text-xl text-gray-100/90">Games</h3>
+      </div>
+      <div class="text-2xl justify-center font-semibold">
+        <h2
+          class="ml-[-10rem] cursor-default decoration-2 mt-1 text-1xl text-blue-400/90 underline-offset-4 underline"
+        >
+          BIBLIOTECA
+        </h2>
+      </div>
+      <div class="text-2xl justify-center font-semibold">
+        <h2 class="hidden">.</h2>
+      </div>
+    </header>
+    <main
+      class="bg-gradient-to-b from-cyan-700/90 to-blue-950 min-h-screen flex flex-col bg-cover"
+    >
+      <div class="flex justify-center pt-8">
+        <div
+          class="bg-gradient-to-r from-sky-300/40 to-blue-800 h-8.5 w-[59rem] rounded-sm justify-between items-center flex"
+        >
+          <div class="flex">
+            <p
+              class="hover:bg-gradient-to-l to-blue-400/70 text-white font-medium text-sm py-1.5 px-5"
+            >
+              Tu lista de juegos
+            </p>
+          </div>
+          <div class="mr-2 group flex">
+            <input
+              type="text"
+              placeholder="  buscar"
+              class="bg-cyan-900 border-t border-b border-l border-cyan-900 rounded-l group-hover:border-blue-400"
+            />
+
+            <img
+              src="src/search_icon_btn_over.png"
+              class="cursor-pointer flex bg-cyan-700 rounded-r border-t border-b border-cyan-900 border-r group-hover:border-blue-400"
+              alt="Search"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center mt-10 mb-10 overflow-y-auto">
+        <div class="w-400">
+          <div class="flex flex-col gap-4" id="Tarjetas-container"></div>
+        </div>
+      </div>
+      <ul
+        class="fixed flex-col-reverse bottom-0 right-0 overflow-y-auto m-4 max-h-96"
+        id="notificacion"
+      ></ul>
+      <div class="mt-auto mb-[2.5rem]"></div>
+      <div class="fixed flex-col-reverse bottom-0 left-0">
+        <h4
+          class="text-gray-300 ml-1 mb-2 bg-gray-700 px-2 py-1 rounded-sm flex"
+        >
+          Jugadores en línea:
+          <p id="jugadoresOnline" class="ml-1"></p>
+          <p
+            class="bg-gradient-to-tr from-green-700 to-green-400 rounded-full ml-[-0.29rem] mt-[-0.3rem] h-5 w-5 scale-35 animate-pulse"
+          ></p>
+        </h4>
+      </div>
+    </main>
+    <script>
+      const jugadores = document.getElementById("jugadoresOnline");
+      const Notificacion = document.getElementById("notificacion");
+      const socket = io();
+
+      function actualizarJugadores(usuarios) {
+        jugadores.innerHTML = usuarios;
+      }
+      socket.on("usuarioConectado", (msg) => {
+        actualizarJugadores(msg);
+      });
+
+      const tarjetas = [
+        {
+          Nombre: "CyberFuture 2088",
+        },
+        {
+          Nombre: "Stormbow Six Siege",
+        },
+        {
+          Nombre: "It Takes Duo",
+        },
+        {
+          Nombre: "Dead West Redemption",
+        },
+        {
+          Nombre: "Precinct City",
+        },
+        {
+          Nombre: "Cozy Valley",
+        },
+        {
+          Nombre: "Silent Hill Reborn",
+        },
+        {
+          Nombre: "BeamDrive NG",
+        },
+        {
+          Nombre: "Civilization Next",
+        },
+        {
+          Nombre: "Forza Horizon X",
+        },
+        {
+          Nombre: "Hollow Night",
+        },
+        {
+          Nombre: "Witcher Saga",
+        },
+        {
+          Nombre: "WarzoneX",
+        },
+        {
+          Nombre: "Legendary Wizard",
+        },
+        {
+          Nombre: "Empire Age II",
+        },
+        {
+          Nombre: "Auto Theft Grand V",
+        },
+        {
+          Nombre: "Tomb Adventurer",
+        },
+        {
+          Nombre: "Empire Age III",
+        },
+        {
+          Nombre: "Elder Scrolls: Skyrealm",
+        },
+      ];
+
+      const container = document.getElementById("Tarjetas-container");
+      const aleatorio = tarjetas
+        .map((valor) => ({ valor, random: Math.random() }))
+        .sort((a, b) => a.random - b.random)
+        .map(({ valor }) => valor);
+      const crearTarjeta = aleatorio
+        .map((juego) => {
+          return `
+    <div class="flex justify-between items-center rounded-xl border border-gray-600 bg-gray-800/90 p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="flex-1 max-w-[60rem] min-w-[20rem]">
+          <h4 class="text-xs font-semibold tracking-wide text-gray-500">
+            Juego
+          </h4>
+        <p class="mt-1  text-gray-100/90 truncate cursor-pointer overflow-x-auto text-base font-medium transition-colors hover:text-white">
+          ${juego.Nombre}
+        </p>
+      </div>
+      <input
+              type="button"
+              value="Jugar"
+              id="btn-jugar"
+              class="bg-lime-700 transition-colors active:bg-lime-700 active:text-gray-300 active:scale-99 w-30 h-10 hover:text-white text-lime-300 rounded-sm border border-gray-600 hover:bg-lime-600"
+            />
+    </div>
+  `;
+        })
+        .join("");
+      container.innerHTML = crearTarjeta;
+      const Jugar = document.querySelectorAll("#btn-jugar");
+      Jugar.forEach((boton, name) => {
+        boton.addEventListener("click", (i) => {
+          alert(`¡El ${aleatorio[name].Nombre} se está iniciando!`);
+          socket.emit("mensaje", aleatorio[name].Nombre);
+        });
+      });
+
+      socket.on("notificacionMensaje", (msg) => {
+        const item = document.createElement("li");
+        const contenido = document.createElement("div");
+        const texto = document.createElement("p");
+        const logo = document.createElement("img");
+
+        logo.src = "src/gamepad-2.svg";
+        logo.alt = "Logo";
+        logo.classList.add(
+          "scale-160",
+          "ml-1",
+          "flex",
+          "invert",
+          "rounded-full"
+        );
+
+        item.classList.add(
+          "flex",
+          "flex-col",
+          "items-center",
+          "w-full",
+          "justify-center",
+          "max-w-xs",
+          "p-4",
+          "text-gray-300",
+          "bg-gray-800/90",
+          "gap-2",
+          "text-left",
+          "text-sm",
+          "rounded-sm",
+          "shadow-sm",
+          "mb-2"
+        );
+
+        contenido.classList.add(
+          "flex",
+          "items-center",
+          "justify-center",
+          "gap-6"
+        );
+
+        texto.textContent = msg;
+        contenido.appendChild(logo);
+        contenido.appendChild(texto);
+        item.appendChild(contenido);
+
+        Notificacion.appendChild(item);
+
+        setTimeout(() => {
+          item.remove();
+          contenido.remove();
+        }, 5000);
+      });
+
+      socket.on("usuarioDesconectado", (msg) => {
+        actualizarJugadores(msg);
+      });
+    </script>
+  </body>
+</html>
