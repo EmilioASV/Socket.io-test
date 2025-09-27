@@ -44,6 +44,7 @@
           </div>
           <div class="mr-2 group flex">
             <input
+              id="buscar"
               type="text"
               placeholder="  buscar"
               class="bg-cyan-900 border-t border-b border-l border-cyan-900 rounded-l group-hover:border-blue-400"
@@ -59,7 +60,11 @@
       </div>
       <div class="flex justify-center items-center mt-10 mb-10 overflow-y-auto">
         <div class="w-400">
-          <div class="flex flex-col gap-4" id="Tarjetas-container"></div>
+          <div class="flex flex-col gap-4" id="tarjetas-container"></div>
+          <div
+            id="sin-resultados"
+            class="hidden mt-4 text-center text-gray-300"
+          ></div>
         </div>
       </div>
       <ul
@@ -72,7 +77,7 @@
           class="text-gray-300 ml-1 mb-2 bg-gray-700 px-2 py-1 rounded-sm flex"
         >
           Jugadores en línea:
-          <p id="jugadoresOnline" class="ml-1"></p>
+          <p id="jugadores-online" class="ml-1"></p>
           <p
             class="bg-gradient-to-tr from-green-700 to-green-400 rounded-full ml-[-0.29rem] mt-[-0.3rem] h-5 w-5 scale-35 animate-pulse"
           ></p>
@@ -80,9 +85,37 @@
       </div>
     </main>
     <script>
-      const jugadores = document.getElementById("jugadoresOnline");
-      const Notificacion = document.getElementById("notificacion");
+      const buscar = document.getElementById("buscar");
+      const jugadores = document.getElementById("jugadores-online");
+      const notificacion = document.getElementById("notificacion");
       const socket = io();
+      const sinResultados = document.getElementById("sin-resultados");
+
+      buscar.addEventListener("input", () => {
+        const juegos = document.getElementById("tarjetas-container").children;
+        const filtro = buscar.value.trim().toLowerCase();
+        let visibles = 0;
+
+        for (let i = 0; i < juegos.length; i++) {
+          const itemText = juegos[i].textContent.toLowerCase();
+
+          if (itemText.includes(filtro)) {
+            juegos[i].style.display = "";
+            visibles++;
+          } else {
+            juegos[i].style.display = "none";
+          }
+        }
+
+        if (visibles === 0) {
+          sinResultados.textContent = "No hay resultados.";
+          sinResultados.classList.remove("hidden");
+          sinResultados.classList.add("font-bold", "text-lg");
+        } else {
+          sinResultados.textContent = "";
+          sinResultados.classList.add("hidden");
+        }
+      });
 
       function actualizarJugadores(usuarios) {
         jugadores.innerHTML = usuarios;
@@ -93,65 +126,65 @@
 
       const tarjetas = [
         {
-          Nombre: "CyberFuture 2088",
+          nombre: "CyberFuture 2088",
         },
         {
-          Nombre: "Stormbow Six Siege",
+          nombre: "Stormbow Six Siege",
         },
         {
-          Nombre: "It Takes Duo",
+          nombre: "It Takes Duo",
         },
         {
-          Nombre: "Dead West Redemption",
+          nombre: "Dead West Redemption",
         },
         {
-          Nombre: "Precinct City",
+          nombre: "Precinct City",
         },
         {
-          Nombre: "Cozy Valley",
+          nombre: "Cozy Valley",
         },
         {
-          Nombre: "Silent Hill Reborn",
+          nombre: "Silent Hill Reborn",
         },
         {
-          Nombre: "BeamDrive NG",
+          nombre: "BeamDrive NG",
         },
         {
-          Nombre: "Civilization Next",
+          nombre: "Civilization Next",
         },
         {
-          Nombre: "Forza Horizon X",
+          nombre: "Forza Horizon X",
         },
         {
-          Nombre: "Hollow Night",
+          nombre: "Hollow Night",
         },
         {
-          Nombre: "Witcher Saga",
+          nombre: "Witcher Saga",
         },
         {
-          Nombre: "WarzoneX",
+          nombre: "WarzoneX",
         },
         {
-          Nombre: "Legendary Wizard",
+          nombre: "Legendary Wizard",
         },
         {
-          Nombre: "Empire Age II",
+          nombre: "Empire Age II",
         },
         {
-          Nombre: "Auto Theft Grand V",
+          nombre: "Auto Theft Grand V",
         },
         {
-          Nombre: "Tomb Adventurer",
+          nombre: "Tomb Adventurer",
         },
         {
-          Nombre: "Empire Age III",
+          nombre: "Empire Age III",
         },
         {
-          Nombre: "Elder Scrolls: Skyrealm",
+          nombre: "Elder Scrolls: Skyrealm",
         },
       ];
 
-      const container = document.getElementById("Tarjetas-container");
+      const container = document.getElementById("tarjetas-container");
       const aleatorio = tarjetas
         .map((valor) => ({ valor, random: Math.random() }))
         .sort((a, b) => a.random - b.random)
@@ -164,16 +197,15 @@
           <h4 class="text-xs font-semibold tracking-wide text-gray-500">
             Juego
           </h4>
-        <p class="mt-1  text-gray-100/90 truncate cursor-pointer overflow-x-auto text-base font-medium transition-colors hover:text-white">
-          ${juego.Nombre}
+        <p class="mt-1 text-gray-100/90 truncate cursor-pointer overflow-x-auto text-base font-medium transition-colors hover:text-white">
+          ${juego.nombre}
         </p>
       </div>
-      <input
+      <button
               type="button"
-              value="Jugar"
               id="btn-jugar"
               class="bg-lime-700 transition-colors active:bg-lime-700 active:text-gray-300 active:scale-99 w-30 h-10 hover:text-white text-lime-300 rounded-sm border border-gray-600 hover:bg-lime-600"
-            />
+            >Jugar</button>
     </div>
   `;
         })
@@ -182,8 +214,8 @@
       const Jugar = document.querySelectorAll("#btn-jugar");
       Jugar.forEach((boton, name) => {
         boton.addEventListener("click", (i) => {
-          alert(`¡El ${aleatorio[name].Nombre} se está iniciando!`);
-          socket.emit("mensaje", aleatorio[name].Nombre);
+          alert(`¡El ${aleatorio[name].nombre} se está iniciando!`);
+          socket.emit("mensaje", aleatorio[name].nombre);
         });
       });
 
@@ -233,7 +265,7 @@
         contenido.appendChild(texto);
         item.appendChild(contenido);
 
-        Notificacion.appendChild(item);
+        notificacion.appendChild(item);
 
         setTimeout(() => {
           item.remove();
