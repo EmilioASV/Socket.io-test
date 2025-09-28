@@ -267,9 +267,12 @@
 
         notificacion.appendChild(item);
 
-        setTimeout(() => {
-          item.remove();
-          contenido.remove();
+          setTimeout(() => {
+          item.classList.add("opacity-0", "transition-opacity", "ease-in-out");
+
+          item.addEventListener("transitionend", () => {
+            item.remove();
+          });
         }, 5000);
       });
 
