@@ -110,7 +110,12 @@
         if (visibles === 0) {
           sinResultados.textContent = "No hay resultados.";
           sinResultados.classList.remove("hidden");
-          sinResultados.classList.add("font-bold", "text-lg");
+          sinResultados.classList.add(
+            "font-semibold",
+            "justify-center",
+            "items-center",
+            "text-lg"
+          );
         } else {
           sinResultados.textContent = "";
           sinResultados.classList.add("hidden");
@@ -267,7 +272,7 @@
 
         notificacion.appendChild(item);
 
-          setTimeout(() => {
+        setTimeout(() => {
           item.classList.add("opacity-0", "transition-opacity", "ease-in-out");
 
           item.addEventListener("transitionend", () => {
