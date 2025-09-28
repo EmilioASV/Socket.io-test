@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tailwind:watch": "npx @tailwindcss/cli -i input.css -o output.css --watch"
+    "tailwind:watch": "npx @tailwindcss/cli -i input.css -o output.css --watch",
+    "build:watch": "npx @tailwindcss/cli -i input.css -o output.css --watch | node --watch index.js ",
+    "build": "npx @tailwindcss/cli -i input.css -o output.css && node index.js"
   },
   "keywords": [],
   "author": "",
